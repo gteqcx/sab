@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# Auth cookies — never commit
+storage_state.json
+
+# Your personal notebook IDs — stay local
+notebook_registry.json
+
+# Deduplication cache — ephemeral
+.dedup_cache.json
+
+# Temp upload files
+/tmp/memory-mcp/

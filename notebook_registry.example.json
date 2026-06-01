@@ -1,0 +1,7 @@
+{
+  "active": "Memory",
+  "projects": {
+    "Memory":    "your-notebooklm-notebook-id-here",
+    "Knowledge": "your-second-notebook-id-here"
+  }
+}
