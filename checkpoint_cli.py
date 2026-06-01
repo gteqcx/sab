@@ -30,7 +30,7 @@ async def main():
         sys.exit(0)
 
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
-    temp_path = TEMP_DIR / f"{uuid.uuid4()}.md"
+    temp_path = TEMP_DIR / f"{uuid.uuid4()}.txt"
 
     content = filter_secrets(content)
     if is_duplicate(content):
