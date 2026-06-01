@@ -199,3 +199,5 @@ If SAB is useful to you:
 ## License
 
 MIT
+
+<!-- last updated: 2026-06-01 -->
