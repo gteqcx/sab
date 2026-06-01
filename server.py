@@ -78,7 +78,7 @@ async def _upload_to_notebook(notebook_id: str, content: str) -> str | None:
     if is_duplicate(content):
         return "duplicate"
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
-    temp_path = TEMP_DIR / f"{uuid.uuid4()}.md"
+    temp_path = TEMP_DIR / f"{uuid.uuid4()}.txt"
     try:
         temp_path.write_text(content)
         async with auth.client() as client:
