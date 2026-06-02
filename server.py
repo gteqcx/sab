@@ -10,6 +10,7 @@ import os
 # Ensure local modules are importable
 sys.path.insert(0, os.path.dirname(__file__))
 
+import re
 import uuid
 from datetime import datetime
 from pathlib import Path
