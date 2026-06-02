@@ -114,16 +114,41 @@ async def ask_memory(query: str) -> str:
 
 
 @server.tool()
-async def store_checkpoint(title: str, content: str) -> str:
-    """Save a session checkpoint or milestone into the active notebook (PERSIST phase).
+async def store_session(topic: str, content: str) -> str:
+    """Save a full session/conversation to the active notebook with a named, searchable file.
 
-    For session summaries, milestone completions, key decisions.
+    Use when PRE-COMPACT fires or at session end. Topic becomes part of the filename,
+    making sessions individually retrievable: session_2026-06-01_SAB-github.txt
+
+    Args:
+        topic: Short slug describing this session, e.g. "SAB-github-publish", "grilldiscount-fix"
+        content: Full session summary — what was done, decisions, next steps, file paths.
+    """
+    date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    filename = _make_filename(f"session_{topic}")
+    full_content = (
+        f"Session: {topic}\n"
+        f"Date: {date}\n"
+        f"Type: session_log\n\n"
+        f"{content}\n"
+    )
+    notebook_id = registry.get_active_id()
+    await _upload_to_notebook(notebook_id, full_content, filename=filename)
+    return f"Session '{topic}' saved as '{filename}' in notebook '{registry.get_active_name()}'."
+
+
+@server.tool()
+async def store_checkpoint(title: str, content: str) -> str:
+    """Save a mid-session milestone into the active notebook (PERSIST phase).
+
+    For quick milestone saves within a session. Use store_session for full session saves.
     Content: what was done, decisions made, blockers, next steps, relevant file paths.
     """
     date = datetime.now().strftime("%Y-%m-%d %H:%M")
-    full_content = f"# Checkpoint: {title}\n**Date:** {date}\n**Type:** session_log\n\n{content}\n"
+    filename = _make_filename(f"checkpoint_{title}")
+    full_content = f"Checkpoint: {title}\nDate: {date}\nType: session_log\n\n{content}\n"
     notebook_id = registry.get_active_id()
-    await _upload_to_notebook(notebook_id, full_content)
+    await _upload_to_notebook(notebook_id, full_content, filename=filename)
     return f"Checkpoint '{title}' saved to notebook '{registry.get_active_name()}'."
 
 
