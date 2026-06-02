@@ -31,9 +31,10 @@ SURVEY → RECALL → EXECUTE → REFLECT → PERSIST
 --- SURVEY & RECALL (at session/task start) ---
 
 MUST call ask_memory when:
-- Starting a new session — query "recent context, active project, and relevant patterns" BEFORE asking the user anything
+- Starting a new session — query "last session summary, active project, next steps" BEFORE asking the user anything
+- After context compaction — immediately call ask_memory("last session summary and current task") and continue without asking the user
 - User says "remember", "recall", "continue from", "помнишь", "продолжи", "что мы делали"
-- Starting a task — query for known patterns matching the problem class (e.g. "patterns for Supabase RLS")
+- Starting a task — query for known patterns matching the problem class
 - User asks about a past decision, project state, or previous work
 
 --- EXECUTE ---
@@ -47,12 +48,15 @@ MUST call store_pattern after completing any non-trivial task:
 - Confidence: "low" (first time), "medium" (worked once), "high" (verified multiple times)
 - Include: what triggers this problem, exact solution, pitfalls to avoid
 
-MUST call store_checkpoint when:
+MUST call store_session (preferred) or store_checkpoint when:
+- PRE-COMPACT message received — immediately call store_session with topic = short slug of current work
 - A milestone is complete (feature done, bug fixed, deploy succeeded)
 - Topic or project context shifts significantly
 - User writes: "save", "checkpoint", "сохрани", "закончили", "пауза", "стоп", "всё на сегодня"
-- After 10+ Write/Edit tool calls without a checkpoint
-- Before a long-running or risky task
+- After 10+ Write/Edit tool calls without a save
+
+Use store_session when saving a whole conversation/session (named, searchable by date+topic).
+Use store_checkpoint for quick mid-session milestones.
 
 --- PROJECT ROUTING ---
 
@@ -61,7 +65,7 @@ MUST call set_active_project when switching projects mid-session.
 
 --- CONTENT QUALITY ---
 
-store_checkpoint content: what was done, decisions, blockers, next steps, file paths.
+store_session / store_checkpoint content: what was done, decisions, blockers, next steps, file paths.
 store_pattern content: problem trigger, exact solution procedure, pitfalls — reusable across sessions.
 """
 
