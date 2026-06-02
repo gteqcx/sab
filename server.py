@@ -78,12 +78,19 @@ server = FastMCP(
 )
 
 
-async def _upload_to_notebook(notebook_id: str, content: str) -> str | None:
+def _make_filename(prefix: str) -> str:
+    date = datetime.now().strftime("%Y-%m-%d")
+    slug = re.sub(r'[^a-zA-Z0-9_-]', '_', prefix)[:40].strip('_')
+    return f"{date}_{slug}.txt"
+
+
+async def _upload_to_notebook(notebook_id: str, content: str, filename: str | None = None) -> str | None:
     content = filter_secrets(content)
     if is_duplicate(content):
         return "duplicate"
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
-    temp_path = TEMP_DIR / f"{uuid.uuid4()}.txt"
+    name = filename or f"{uuid.uuid4()}.txt"
+    temp_path = TEMP_DIR / name
     try:
         temp_path.write_text(content)
         async with auth.client() as client:
